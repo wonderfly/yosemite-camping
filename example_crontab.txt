@@ -1,0 +1,9 @@
+# Disable crontab email alerts, if `sendmail` is not configured on your system
+MAILTO=""
+
+# Explicity set locales needed by pipenv
+LANG=en_US.UTF-8
+LC_ALL=en_US.UTF-8
+
+# Runs the script with pipenv every 10 minutes between 7:00 and 23:00.
+*/10 07-23 * * * cd /Users/wonderfly/src/github.com/wonderfly/yosemite-camping && /usr/local/bin/pipenv run python campsites.py --start_date=2018-08-29 --end_date=2018-08-30 --send_email > /Users/wonderfly/logs/campsites-"$(/bin/date)".txt 2>&1

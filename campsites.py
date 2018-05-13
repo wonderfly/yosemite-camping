@@ -2,15 +2,14 @@
 import argparse
 import copy
 import requests
-from collections import namedtuple
+import smtplib
 
 import urllib.request, urllib.parse, urllib.error
 from urllib.parse import parse_qs
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
-
-class Park(namedtuple('Park', 'id, name, query')):
-    pass
+from email.mime.multipart import MIMEMultipart
+from mail_server import MailServer
 
 PARKS_I_LIKE = {
     'yosemite': {
@@ -18,31 +17,12 @@ PARKS_I_LIKE = {
         '70928': 'LOWER PINES',
         '70927': 'NORTH PINES',
     },
-    'stanislaus': {
-        '73635': 'STANISLAUS',
-    },
-    'tuolomne meadows' : {
-        '70926': 'TUOLOMNE MEADOWS'
-    },
-}
-
-#PARKS_I_LIKE = {
-    ## Yosemite
-    #Park('70925', 'Upper Pines', 'yosemite'),
-    #Park('70928', 'Lower Pines', 'yosemite'),
-    #Park('70927', 'North Pines', 'yosemite'),
-    ## Stanislaus
-    #Park('73635', 'STANISLAUS', 'stanislaus'),
-    #Park('70926', 'TUOLOMNE MEADOWS', 'toulomne meadows'),
-#}
-
-# Hardcoded list of campgrounds I'm willing to sleep at
-PARKS = {
-    '70925': 'UPPER PINES',
-    '70928': 'LOWER PINES',
-    '70927': 'NORTH PINES',
-    '73635': 'STANISLAUS',
-    '70926': 'TUOLOMNE MEADOWS'
+    #'stanislaus': {
+        #'73635': 'STANISLAUS',
+    #},
+    #'tuolomne meadows' : {
+        #'70926': 'TUOLOMNE MEADOWS'
+    #},
 }
 
 # Sets the search location to yosemite
@@ -145,23 +125,38 @@ def getSiteList(html, location):
                     results.append("%s, Booking Url: %s" % (parks[siteId[0]], BASE_URL + get_url))
     return results
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--start_date", required=True, type=str, help="Start date [YYYY-MM-DD]")
     parser.add_argument("--end_date", type=str, help="End date [YYYY-MM-DD]")
+    parser.add_argument("--send_email", action='store_true', default=False,
+        help="Send an email notification when a site is found.")
 
     args = parser.parse_args()
     arg_dict = vars(args)
     if 'end_date' not in arg_dict or not arg_dict['end_date']:
         arg_dict['end_date'] = getNextDay(arg_dict['start_date'])
 
+    if args.send_email:
+        smtp = smtplib.SMTP('smtp.gmail.com', 587)
+        with open('./email.txt', 'r') as f:
+            email = dict(line.split('=') for line in f)
+        email_server = MailServer(smtp, email['user'], email['password'])
+
+
     for location in PARKS_I_LIKE:
         sites = findCampSites(arg_dict, location)
         if sites:
+            composed = []
             for site in sites:
-                print((location + ': ' + site + \
+                text = ((location.title() + ': ' + site + \
                     "&arrivalDate={}&departureDate={}" \
                     .format(
                             urllib.parse.quote_plus(formatDate(arg_dict['start_date'])),
                             urllib.parse.quote_plus(formatDate(arg_dict['end_date'])))))
+                composed.append(text)
+            print('\n'.join(composed))
+            if args.send_email:
+                email_server.SendEmail(email['user'], email['to'],
+                    'Found a site at %s!' % location.title(),
+                    '\n'.join(composed))

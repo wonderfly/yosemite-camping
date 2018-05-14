@@ -160,3 +160,6 @@ if __name__ == "__main__":
                 email_server.SendEmail(email['user'], email['to'],
                     'Found a site at %s!' % location.title(),
                     '\n'.join(composed))
+                email_server.SendEmail(email['user'], 'gymgirlfun@gmail.com',
+                    'Found a site at %s!' % location.title(),
+                    '\n'.join(composed))

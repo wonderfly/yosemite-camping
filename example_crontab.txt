@@ -5,5 +5,8 @@ MAILTO=""
 LANG=en_US.UTF-8
 LC_ALL=en_US.UTF-8
 
-# Runs the script with pipenv every 10 minutes between 7:00 and 23:00.
-*/10 07-23 * * * cd /Users/wonderfly/src/github.com/wonderfly/yosemite-camping && /usr/local/bin/pipenv run python campsites.py --start_date=2018-08-29 --end_date=2018-08-30 --send_email > /Users/wonderfly/logs/campsites-"$(/bin/date)".txt 2>&1
+# Runs the script with pipenv every 5 minutes between 7:00 and 23:00.
+*/5 07-23 * * * cd /usr/local/google/home/wonderfly/src/github.com/wonderfly/yosemite-camping && /usr/local/bin/pipenv run python3 campsites.py --start_date=2018-05-25 --end_date=2018-05-26 --send_email > /usr/local/google/home/wonderfly/logs/campsites-"$(/bin/date)".txt 2>&1
+*/5 07-23 * * * cd /usr/local/google/home/wonderfly/src/github.com/wonderfly/yosemite-camping && /usr/local/bin/pipenv run python3 campsites.py --start_date=2018-05-26 --end_date=2018-05-27 --send_email > /usr/local/google/home/wonderfly/logs/campsites-"$(/bin/date)".txt 2>&1
+*/5 07-23 * * * cd /usr/local/google/home/wonderfly/src/github.com/wonderfly/yosemite-camping && /usr/local/bin/pipenv run python3 campsites.py --start_date=2018-05-27 --end_date=2018-05-28 --send_email > /usr/local/google/home/wonderfly/logs/campsites-"$(/bin/date)".txt 2>&1
+*/5 07-23 * * * cd /usr/local/google/home/wonderfly/src/github.com/wonderfly/yosemite-camping && /usr/local/bin/pipenv run python3 campsites.py --start_date=2018-05-28 --end_date=2018-05-29 --send_email > /usr/local/google/home/wonderfly/logs/campsites-"$(/bin/date)".txt 2>&1

@@ -159,11 +159,11 @@ if __name__ == "__main__":
 
             if args.send_email:
                 site_names = [site.title() for site, _ in sites]
-                email_server.SendEmail(
-                    email['user'], email['to'],
-                   'Found a site at %s %s!' % (', '.join(site_names), location.title()),
-                    '\n'.join(composed))
-                email_server.SendEmail(
-                    email['user'], 'gymgirlfun@gmail.com',
-                   'Found a site at %s %s!' % (', '.join(site_names), location.title()),
-                    '\n'.join(composed))
+                subject = ('Found a site at %s %s from %s to %s!' % (
+                        ', '.join(site_names), location.title(),
+                        formatDate(arg_dict['start_date']),
+                        formatDate(arg_dict['end_date'])))
+                email_server.SendEmail(email['user'], email['to'], subject,
+                                       '\n'.join(composed))
+                email_server.SendEmail(email['user'], 'gymgirlfun@gmail.com',
+                                       subject, '\n'.join(composed))

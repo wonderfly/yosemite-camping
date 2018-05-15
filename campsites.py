@@ -122,7 +122,7 @@ def getSiteList(html, location):
                 get_params = parse_qs(get_query)
                 siteId = get_params['parkId']
                 if siteId and siteId[0] in parks:
-                    results.append("%s, Booking Url: %s" % (parks[siteId[0]], BASE_URL + get_url))
+                    results.append((parks[siteId[0]], 'Booking Url: %s' % (BASE_URL + get_url)))
     return results
 
 if __name__ == "__main__":
@@ -148,18 +148,22 @@ if __name__ == "__main__":
         sites = findCampSites(arg_dict, location)
         if sites:
             composed = []
-            for site in sites:
-                text = ((location.title() + ': ' + site + \
+            for site, url in sites:
+                text = ((location.title() + ': ' + site.title() + ', ' + url + \
                     "&arrivalDate={}&departureDate={}" \
                     .format(
                             urllib.parse.quote_plus(formatDate(arg_dict['start_date'])),
                             urllib.parse.quote_plus(formatDate(arg_dict['end_date'])))))
                 composed.append(text)
             print('\n'.join(composed))
+
             if args.send_email:
-                email_server.SendEmail(email['user'], email['to'],
-                    'Found a site at %s!' % location.title(),
+                site_names = [site.title() for site, _ in sites]
+                email_server.SendEmail(
+                    email['user'], email['to'],
+                   'Found a site at %s %s!' % (', '.join(site_names), location.title()),
                     '\n'.join(composed))
-                email_server.SendEmail(email['user'], 'gymgirlfun@gmail.com',
-                    'Found a site at %s!' % location.title(),
+                email_server.SendEmail(
+                    email['user'], 'gymgirlfun@gmail.com',
+                   'Found a site at %s %s!' % (', '.join(site_names), location.title()),
                     '\n'.join(composed))

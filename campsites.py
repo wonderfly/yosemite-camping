@@ -81,7 +81,7 @@ def sendRequest(payload, location):
         # Runs search on specified dates
         resp = s.post(BASE_URL + UNIF_SEARCH, payload, verify=False)
         if (resp.status_code != 200):
-            raise Exception("failedRequest","ERROR, %d code received from %s".format(resp.status_code, BASE_URL + SEARCH_PATH))
+            raise Exception("failedRequest","ERROR, %d code received from %s".format(resp.status_code, BASE_URL + UNIF_SEARCH))
         else:
             return resp.text
 
